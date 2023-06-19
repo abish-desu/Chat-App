@@ -15,7 +15,7 @@ export default function Home() {
   const sendMsg = () => {
     socket.emit("send_msg", { room, msg });
     setMessages((prevMessages) => [...prevMessages, `You: ${msg}`]);
-    setMsg("");
+    setMsg("")
   };
 
   useEffect(() => {
