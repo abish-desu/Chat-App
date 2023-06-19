@@ -13,20 +13,30 @@ const io = new Server(server, {
   },
 });
 
-const rooms = new Map();
+const roomPinMap = new Map();
 
 io.on("connection", (socket) => {
   console.log(`user connected: ${socket.id}`);
 
   socket.on("join_room", (room) => {
-    socket.join(room);
-    console.log(`User ${socket.id} joined room ${room}`);
-    socket.room = room;
+    console.log(room)
+    if (roomPinMap.has(room)) {
+      socket.join(room);
+      socket.room = room;
+      } else {
+        console.log(room)
+      socket.emit("no_room_found", room);
+    }
+  });
+  socket.on("create_room", (roomPin) => {
+   roomPinMap.set(roomPin)
+    socket.join(roomPin);
+
   });
 
   socket.on("send_msg", (data) => {
     const { room, msg } = data;
-    socket.to(room).emit("receive_msg", { room, message: msg });
+    socket.to(room).emit("receive_msg", {  message: msg });
   });
 
   socket.on("disconnect", () => {
