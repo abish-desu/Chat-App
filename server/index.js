@@ -19,29 +19,30 @@ io.on("connection", (socket) => {
   console.log(`user connected: ${socket.id}`);
 
   socket.on("join_room", (room) => {
-    console.log(room)
+    console.log(room);
     if (roomPinMap.has(room)) {
       socket.join(room);
       socket.emit("joined_room", room);
 
       socket.room = room;
-      } else {
-        console.log(room)
+    } else {
+      console.log(room);
       socket.emit("no_room_found", room);
     }
   });
   socket.on("create_room", (roomPin) => {
-    console.log("hehe")
-   roomPinMap.set(roomPin)
-    socket.join(roomPin);
-    socket.emit("created_room", roomPin);
+    roomPinMap.has(roomPin)
+      ? socket.emit("room_already_exist",roomPin)
+      :  (roomPinMap.set(roomPin),
+    socket.join(roomPin),
+    socket.emit("created_room", roomPin));
 
-
+    
   });
 
   socket.on("send_msg", (data) => {
-    const {room,msg } = data;
-    socket.to(room).emit("receive_msg", {  message: msg });
+    const { room, msg } = data;
+    socket.to(room).emit("receive_msg", { message: msg });
   });
 
   socket.on("disconnect", () => {
