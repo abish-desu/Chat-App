@@ -22,6 +22,8 @@ io.on("connection", (socket) => {
     console.log(room)
     if (roomPinMap.has(room)) {
       socket.join(room);
+      socket.emit("joined_room", room);
+
       socket.room = room;
       } else {
         console.log(room)
@@ -29,13 +31,16 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("create_room", (roomPin) => {
+    console.log("hehe")
    roomPinMap.set(roomPin)
     socket.join(roomPin);
+    socket.emit("created_room", roomPin);
+
 
   });
 
   socket.on("send_msg", (data) => {
-    const { room, msg } = data;
+    const {room,msg } = data;
     socket.to(room).emit("receive_msg", {  message: msg });
   });
 
